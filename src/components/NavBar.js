@@ -1,10 +1,13 @@
 import React, { useCallback } from 'react';
+
 import { HStack, IconButton } from 'native-base';
 import Icon from 'react-native-vector-icons/Feather';
+
 import { useNavigation } from '@react-navigation/native';
 
 const NavBar = () => {
   const navigation = useNavigation();
+
   const handlePressMenuButton = useCallback(() => {
     navigation.openDrawer();
   }, [navigation]);

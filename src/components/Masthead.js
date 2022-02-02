@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Box, VStack, Heading, Image } from 'native-base';
 
 const Masthead = ({ title, image, children }) => {

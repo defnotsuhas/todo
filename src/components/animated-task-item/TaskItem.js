@@ -12,25 +12,24 @@ import {
 
 import Icon from 'react-native-vector-icons/Feather';
 
-import AnimatedCheckBox from './AnimatedCheckBox';
+import AnimatedCheckBox from '../animated-checkbox/AnimatedCheckBox';
 import AnimatedTaskLabel from './AnimatedTaskLabel';
 import SwipableView from './SwipableView';
 
-const TaskItem = props => {
-  const {
-    isEditing,
-    onChangeSubject,
-    onFinishEditing,
-    isDone,
-    onToggleCheckbox,
-    onPressLabel,
-    onRemove,
-    subject,
-    simultaneousHandlers,
-  } = props;
-
+const TaskItem = ({
+  simultaneousHandlers,
+  isDone,
+  subject,
+  isEditing,
+  onChangeSubject,
+  onFinishEditing,
+  onToggleCheckbox,
+  onPressLabel,
+  onRemove,
+}) => {
   const theme = useTheme();
 
+  // Colors
   const highlightColor = themeTools.getColor(
     theme,
     useColorModeValue('blue.500', 'blue.400'),
@@ -52,9 +51,10 @@ const TaskItem = props => {
     useColorModeValue('muted.400', 'muted.600'),
   );
 
+  // Handle Subject Change using NativeEvent.Text and passing prop
   const handleChangeSubject = useCallback(
     e => {
-      onChangeSubject && onChangeSubject(e.nativeEvent.text);
+      onChangeSubject(e.nativeEvent.text);
     },
     [onChangeSubject],
   );

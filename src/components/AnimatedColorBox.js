@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
-import { Box, useTheme, themeTools } from 'native-base';
 
-import { usePrevious } from '../utils/usePrevious';
+import { Box, useTheme, themeTools } from 'native-base';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   interpolateColor,
 } from 'react-native-reanimated';
+
+import { usePrevious } from '../utils/usePrevious';
 
 const AnimatedBox = Animated.createAnimatedComponent(Box);
 

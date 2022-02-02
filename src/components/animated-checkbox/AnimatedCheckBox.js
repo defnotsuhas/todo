@@ -7,6 +7,7 @@ import Animated, {
   interpolateColor,
   Easing,
 } from 'react-native-reanimated';
+
 import Svg, { Path, ClipPath, G, Defs } from 'react-native-svg';
 
 import AnimatedStroke from './AnimatedStroke';
@@ -21,9 +22,12 @@ const outlineBoxPath =
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
-const AnimatedCheckBox = props => {
-  const { checked, checkmarkColor, highlightColor, boxOutlineColor } = props;
-
+const AnimatedCheckBox = ({
+  checked,
+  checkmarkColor,
+  highlightColor,
+  boxOutlineColor,
+}) => {
   const progress = useSharedValue(0);
 
   useEffect(() => {

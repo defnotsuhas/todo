@@ -1,40 +1,48 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
-import { VStack, Fab, useColorModeValue } from 'native-base';
+import RNAsyncStorageFlipper from 'rn-async-storage-flipper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { VStack, Fab, useColorModeValue, useColorMode } from 'native-base';
 
 import Icon from 'react-native-vector-icons/AntDesign';
-import shortid from 'shortid';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useColorMode } from 'native-base';
 
 import AnimatedColorBox from '../components/AnimatedColorBox';
 import TaskList from '../components/TaskList';
 import Masthead from '../components/Masthead';
 import NavBar from '../components/NavBar';
 
-const initialData = [
-  {
-    id: shortid.generate(),
-    subject: 'Add Your First Task!',
-    done: false,
-  },
-  {
-    id: shortid.generate(),
-    subject: 'Just Swipe Left to Delete Task!',
-    done: false,
-  },
-  {
-    id: shortid.generate(),
-    subject: 'And Rejoice Once Done!',
-    done: true,
-  },
-];
+import { connect } from 'react-redux';
+import {
+  handleChangeTaskItemSubject,
+  handleFinishEditingTaskItem,
+  handleNewTaskItem,
+  handlePressTaskItemLabel,
+  handleRemoveTaskItem,
+  handleToggleTaskItem,
+  handleGetTasks,
+  handleSaveTasks,
+} from '../redux/data/data.actions';
 
-const MainScreen = () => {
-  const [data, setData] = useState([]);
-  const [editingItemId, setEditingItemId] = useState(null);
+const MainScreen = ({
+  tasks,
+  editingId,
+  getTasks,
+  saveTasks,
+  toggleTaskItem,
+  changeTaskItemSubject,
+  finishEditingTaskItem,
+  newTaskItem,
+  pressTaskItemLabel,
+  removeTaskItem,
+}) => {
+  // For Debugging AsyncStorage in Flipper
+  RNAsyncStorageFlipper(AsyncStorage);
+
   const { colorMode, setColorMode } = useColorMode();
+  const didMount = useRef(false);
 
+  // Save Theme into AsyncStorage
   const saveTheme = async () => {
     try {
       await AsyncStorage.setItem('theme', JSON.stringify(colorMode));
@@ -43,102 +51,42 @@ const MainScreen = () => {
     }
   };
 
+  // Load Theme from AsyncStorage
   const loadTheme = async () => {
     try {
       const newTheme = await AsyncStorage.getItem('theme');
 
       if (newTheme && JSON.parse(newTheme).length) {
         setColorMode(JSON.parse(newTheme));
-      } else {
-        setColorMode('light');
       }
     } catch (e) {
       console.log(e);
     }
   };
 
-  const saveTodoList = async () => {
-    try {
-      await AsyncStorage.setItem('todoList', JSON.stringify(data));
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const loadTodoList = async () => {
-    try {
-      const todos = await AsyncStorage.getItem('todoList');
-
-      if (todos && JSON.parse(todos).length) {
-        setData(JSON.parse(todos));
-      } else {
-        setData(initialData);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
+  // Call loadTheme & getTasks on Initial Render
   useEffect(() => {
-    loadTodoList();
     loadTheme();
+    getTasks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Call saveTasks when tasks changes except on Initial Render
+  // This could be done better by using a Debounce Function to avoid excessive saving.
   useEffect(() => {
-    saveTodoList();
+    if (didMount.current) {
+      saveTasks();
+    } else {
+      didMount.current = true;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [tasks]);
 
+  // Call saveTheme when Theme is changed
   useEffect(() => {
     saveTheme();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [colorMode]);
-
-  const handleToggleTaskItem = useCallback(item => {
-    setData(prevData => {
-      const newData = [...prevData];
-      const index = prevData.indexOf(item);
-      newData[index] = {
-        ...item,
-        done: !item.done,
-      };
-      return newData;
-    });
-  }, []);
-
-  const handleChangeTaskItemSubject = useCallback((item, newSubject) => {
-    setData(prevData => {
-      const newData = [...prevData];
-      const index = prevData.indexOf(item);
-      newData[index] = {
-        ...item,
-        subject: newSubject,
-      };
-      return newData;
-    });
-  }, []);
-
-  const handleFinishEditingTaskItem = useCallback(
-    item => {
-      if (item.subject === '') {
-        handleRemoveItem(item);
-      }
-      setEditingItemId(null);
-    },
-    [handleRemoveItem],
-  );
-
-  const handlePressTaskItemLabel = useCallback(item => {
-    setEditingItemId(item.id);
-  }, []);
-
-  const handleRemoveItem = useCallback(item => {
-    setData(prevData => {
-      const newData = prevData.filter(i => i !== item);
-      return newData;
-    });
-  }, []);
 
   return (
     <AnimatedColorBox
@@ -158,15 +106,17 @@ const MainScreen = () => {
         borderTopLeftRadius="20px"
         borderTopRightRadius="20px"
         pt="20px">
-        <TaskList
-          data={data}
-          onToggleItem={handleToggleTaskItem}
-          onChangeSubject={handleChangeTaskItemSubject}
-          onFinishEditing={handleFinishEditingTaskItem}
-          onPressLabel={handlePressTaskItemLabel}
-          onRemoveItem={handleRemoveItem}
-          editingItemId={editingItemId}
-        />
+        {tasks && (
+          <TaskList
+            data={tasks}
+            onToggleItem={toggleTaskItem}
+            onChangeSubject={changeTaskItemSubject}
+            onFinishEditing={finishEditingTaskItem}
+            onPressLabel={pressTaskItemLabel}
+            onRemoveItem={removeTaskItem}
+            editingItemId={editingId}
+          />
+        )}
       </VStack>
       <Fab
         position="absolute"
@@ -175,21 +125,28 @@ const MainScreen = () => {
         icon={<Icon color="white" name="plus" />}
         colorScheme={useColorModeValue('blue', 'darkBlue')}
         bg={useColorModeValue('blue.500', 'blue.400')}
-        onPress={() => {
-          const id = shortid.generate();
-          setData([
-            {
-              id,
-              subject: '',
-              done: false,
-            },
-            ...data,
-          ]);
-          setEditingItemId(id);
-        }}
+        onPress={newTaskItem}
       />
     </AnimatedColorBox>
   );
 };
 
-export default MainScreen;
+// Maps the States to the Props of the Component
+const mapStateToProps = state => ({
+  tasks: state.data.tasks,
+  editingId: state.data.editingId,
+});
+
+// Maps the Dispatch Methods to the Props of the Component
+const mapDispatchToProps = dispatch => ({
+  toggleTaskItem: task => dispatch(handleToggleTaskItem(task)),
+  changeTaskItemSubject: data => dispatch(handleChangeTaskItemSubject(data)),
+  finishEditingTaskItem: task => dispatch(handleFinishEditingTaskItem(task)),
+  newTaskItem: () => dispatch(handleNewTaskItem()),
+  pressTaskItemLabel: task => dispatch(handlePressTaskItemLabel(task)),
+  removeTaskItem: task => dispatch(handleRemoveTaskItem(task)),
+  getTasks: () => dispatch(handleGetTasks()),
+  saveTasks: () => dispatch(handleSaveTasks()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainScreen);

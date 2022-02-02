@@ -9,16 +9,21 @@ import Animated, {
   withTiming,
   runOnJS,
 } from 'react-native-reanimated';
+
 import { Box } from 'native-base';
-import { makeStyledComponent } from '../utils/styled';
+import { makeStyledComponent } from '../../utils/styled';
 
 const StyledView = makeStyledComponent(Animated.View);
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const SWIPE_THRESHOLD = -SCREEN_WIDTH * 0.2;
 
-const SwipableView = props => {
-  const { children, backView, onSwipeLeft, simultaneousHandlers } = props;
+const SwipableView = ({
+  simultaneousHandlers,
+  backView,
+  onSwipeLeft,
+  children,
+}) => {
   const translateX = useSharedValue(0);
 
   const panGesture = useAnimatedGestureHandler({

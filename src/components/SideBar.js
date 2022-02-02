@@ -14,8 +14,7 @@ import ThemeToggle from './ThemeToggle';
 import Icon from 'react-native-vector-icons/Feather';
 import MenuButton from './MenuButton';
 
-const SideBar = props => {
-  const { state, navigation } = props;
+const SideBar = ({ state, navigation }) => {
   const currentRoute = state.routeNames[state.index];
 
   const handlePressBackButton = useCallback(() => {

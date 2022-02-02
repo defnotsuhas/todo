@@ -44,7 +44,7 @@ const AboutScreen = () => {
           </Box>
 
           <Text fontSize="md">
-            This is a React Native To-Do App, built without Redux.
+            This is a React Native To-Do App, built with Redux & Redux Saga.
           </Text>
 
           <View>
@@ -64,6 +64,12 @@ const AboutScreen = () => {
               - Content can get hidden behind Android NavBar if it exists.
             </Text>
             <Text fontSize="md">- Animations may look jerky.</Text>
+            <Text fontSize="md">
+              - On every App load, every TaskItem gets a new ID.
+            </Text>
+            <Text fontSize="md">
+              - saveTasks is called on each keypress when updating Task Subject.
+            </Text>
           </View>
         </VStack>
       </ScrollView>

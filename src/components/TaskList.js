@@ -1,93 +1,23 @@
-import React, { useCallback, useRef } from 'react';
-import { AnimatePresence, View } from 'moti';
+import React, { useRef } from 'react';
 
-import TaskItem from './TaskItem';
-import { makeStyledComponent } from '../utils/styled';
-
+import { AnimatePresence } from 'moti';
 import { ScrollView } from 'react-native-gesture-handler';
 
-const StyledView = makeStyledComponent(View);
+import { makeStyledComponent } from '../utils/styled';
+
+import AnimatedTaskItem from './animated-task-item/AnimatedTaskItem';
+
 const StyledScrollView = makeStyledComponent(ScrollView);
 
-export const AnimatedTaskItem = props => {
-  const {
-    simultaneousHandlers,
-    isEditing,
-    data,
-    onToggleItem,
-    onChangeSubject,
-    onFinishEditing,
-    onPressLabel,
-    onRemove,
-  } = props;
-
-  const handleToggleCheckbox = useCallback(() => {
-    onToggleItem(data);
-  }, [data, onToggleItem]);
-
-  const handleChangeSubject = useCallback(
-    subject => {
-      onChangeSubject(data, subject);
-    },
-    [data, onChangeSubject],
-  );
-
-  const handleFinishEditing = useCallback(() => {
-    onFinishEditing(data);
-  }, [data, onFinishEditing]);
-
-  const handlePressLabel = useCallback(() => {
-    onPressLabel(data);
-  }, [data, onPressLabel]);
-
-  const handleRemove = useCallback(() => {
-    onRemove(data);
-  }, [data, onRemove]);
-
-  return (
-    <StyledView
-      w="full"
-      from={{
-        opacity: 0,
-        scale: 0.5,
-        marginBottom: -46,
-      }}
-      animate={{
-        opacity: 1,
-        scale: 1,
-        marginBottom: 0,
-      }}
-      exit={{
-        opacity: 0,
-        scale: 0.5,
-        marginBottom: -46,
-      }}>
-      <TaskItem
-        simultaneousHandlers={simultaneousHandlers}
-        subject={data.subject}
-        isDone={data.done}
-        isEditing={isEditing}
-        onToggleCheckbox={handleToggleCheckbox}
-        onChangeSubject={handleChangeSubject}
-        onFinishEditing={handleFinishEditing}
-        onPressLabel={handlePressLabel}
-        onRemove={handleRemove}
-      />
-    </StyledView>
-  );
-};
-
-export const TaskList = props => {
-  const {
-    data,
-    editingItemId,
-    onToggleItem,
-    onChangeSubject,
-    onFinishEditing,
-    onPressLabel,
-    onRemoveItem,
-  } = props;
-
+export const TaskList = ({
+  data,
+  editingItemId,
+  onToggleItem,
+  onChangeSubject,
+  onFinishEditing,
+  onPressLabel,
+  onRemoveItem,
+}) => {
   const refScrollView = useRef(null);
 
   return (
@@ -95,9 +25,9 @@ export const TaskList = props => {
       <AnimatePresence>
         {data.map(item => (
           <AnimatedTaskItem
-            key={item.id}
-            data={item}
             simultaneousHandlers={refScrollView}
+            key={item.id}
+            taskItem={item}
             isEditing={item.id === editingItemId}
             onToggleItem={onToggleItem}
             onChangeSubject={onChangeSubject}
