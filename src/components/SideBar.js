@@ -72,6 +72,12 @@ const SideBar = ({ state, navigation }) => {
           icon={<Icon name="info" />}>
           About
         </MenuButton>
+        <MenuButton
+          // active={currentRoute === 'About'}
+          // onPress={handlePressMenuAbout}
+          icon={<Icon name="download-cloud" />}>
+          Fetch To-Dos
+        </MenuButton>
       </VStack>
       <Center>
         <ThemeToggle />
