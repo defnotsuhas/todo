@@ -14,7 +14,10 @@ import ThemeToggle from './ThemeToggle';
 import Icon from 'react-native-vector-icons/Feather';
 import MenuButton from './MenuButton';
 
-const SideBar = ({ state, navigation }) => {
+import { connect } from 'react-redux';
+import { handleFetchTasks } from '../redux/data/data.actions';
+
+const SideBar = ({ state, navigation, fetchTasks }) => {
   const currentRoute = state.routeNames[state.index];
 
   const handlePressBackButton = useCallback(() => {
@@ -28,6 +31,10 @@ const SideBar = ({ state, navigation }) => {
   const handlePressMenuAbout = useCallback(() => {
     navigation.navigate('About');
   }, [navigation]);
+
+  const handlePressMenuFetchTasks = () => {
+    fetchTasks();
+  };
 
   return (
     <AnimatedColorBox
@@ -73,8 +80,7 @@ const SideBar = ({ state, navigation }) => {
           About
         </MenuButton>
         <MenuButton
-          // active={currentRoute === 'About'}
-          // onPress={handlePressMenuAbout}
+          onPress={handlePressMenuFetchTasks}
           icon={<Icon name="download-cloud" />}>
           Fetch To-Dos
         </MenuButton>
@@ -86,4 +92,8 @@ const SideBar = ({ state, navigation }) => {
   );
 };
 
-export default SideBar;
+const mapDispatchToProps = dispatch => ({
+  fetchTasks: () => dispatch(handleFetchTasks()),
+});
+
+export default connect(null, mapDispatchToProps)(SideBar);

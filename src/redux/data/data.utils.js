@@ -12,7 +12,7 @@ export const toggleTaskItem = (tasks, taskToToggle) => {
 
   newTasks[index] = {
     ...taskToToggle,
-    done: !taskToToggle.done,
+    completed: !taskToToggle.completed,
   };
   return newTasks;
 };
@@ -23,7 +23,7 @@ export const changeTaskItemSubject = (tasks, taskItem, newSubject) => {
 
   newTasks[index] = {
     ...taskItem,
-    subject: newSubject,
+    title: newSubject,
   };
   return newTasks;
 };
@@ -66,8 +66,8 @@ export const newTaskItem = data => {
     tasks: [
       {
         id: id,
-        subject: '',
-        done: false,
+        title: '',
+        completed: false,
       },
       ...prevTasks,
     ],

@@ -24,7 +24,7 @@ export const AnimatedTaskItem = ({
 
   const handleChangeSubject = useCallback(
     subject => {
-      onChangeSubject({ task: taskItem, subject: subject });
+      onChangeSubject({ task: taskItem, title: subject });
     },
     [taskItem, onChangeSubject],
   );
@@ -61,8 +61,8 @@ export const AnimatedTaskItem = ({
       }}>
       <TaskItem
         simultaneousHandlers={simultaneousHandlers}
-        subject={taskItem.subject}
-        isDone={taskItem.done}
+        subject={taskItem.title}
+        isDone={taskItem.completed}
         isEditing={isEditing}
         onToggleCheckbox={handleToggleCheckbox}
         onChangeSubject={handleChangeSubject}

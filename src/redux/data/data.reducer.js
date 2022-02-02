@@ -38,7 +38,7 @@ const dataReducer = (state = INITIAL_STATE, action) => {
       let tasks = changeTaskItemSubject(
         state.tasks,
         action.payload.task,
-        action.payload.subject,
+        action.payload.title,
       );
 
       return {

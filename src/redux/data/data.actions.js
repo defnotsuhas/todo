@@ -4,6 +4,10 @@ export const handleGetTasks = () => ({
   type: DataActionTypes.GET_TASKS,
 });
 
+export const handleFetchTasks = () => ({
+  type: DataActionTypes.FETCH_TASKS,
+});
+
 export const handleSaveTasks = () => ({
   type: DataActionTypes.SAVE_TASKS,
 });

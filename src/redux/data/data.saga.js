@@ -4,22 +4,23 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { handleSetTasks } from './data.actions';
 
 import shortid from 'shortid';
+import axios from 'axios';
 
 const INITIAL_TASKS = [
   {
     id: shortid.generate(),
-    subject: 'Add Your First Task!',
-    done: false,
+    title: 'Add Your First Task!',
+    completed: false,
   },
   {
     id: shortid.generate(),
-    subject: 'Just Swipe Left to Delete Task!',
-    done: false,
+    title: 'Just Swipe Left to Delete Task!',
+    completed: false,
   },
   {
     id: shortid.generate(),
-    subject: 'And Rejoice Once Done!',
-    done: true,
+    title: 'And Rejoice Once Done!',
+    completed: true,
   },
 ];
 
@@ -29,6 +30,24 @@ export function* handleGetTasks() {
 
     if (tasks) {
       yield put(handleSetTasks(JSON.parse(tasks)));
+    } else {
+      yield put(handleSetTasks(INITIAL_TASKS));
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export function* handleFetchTasks() {
+  try {
+    const { data } = yield call(
+      axios.get,
+      'https://jsonplaceholder.typicode.com/todos',
+    );
+    let tasks = data.sort(() => Math.random() - Math.random()).slice(0, 6);
+
+    if (tasks) {
+      yield put(handleSetTasks(tasks));
     } else {
       yield put(handleSetTasks(INITIAL_TASKS));
     }

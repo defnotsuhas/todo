@@ -8,4 +8,5 @@ export const DataActionTypes = {
   SET_TASKS: 'SET_TASKS',
   GET_TASKS: 'GET_TASKS',
   SAVE_TASKS: 'SAVE_TASKS',
+  FETCH_TASKS: 'FETCH_TASKS',
 };
